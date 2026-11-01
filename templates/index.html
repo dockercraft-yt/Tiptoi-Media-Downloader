@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tiptoi Media Downloader</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <main class="page">
+        <h1 class="page-title">Tiptoi Media Downloader</h1>
+        <form class="results-toolbar" id="results-controls" action="/" method="get">
+            <label class="search-control" for="search-input">
+                <span>Suchen</span>
+                <input id="search-input" name="q" type="search" value="{{ q }}" placeholder="Titel eingeben" autocomplete="off">
+            </label>
+            <label class="page-size-control" for="per-page">
+                <span>Einträge pro Seite</span>
+                <select id="per-page" name="per_page">
+                    <option value="25" {% if per_page == "25" %}selected{% endif %}>25</option>
+                    <option value="50" {% if per_page == "50" %}selected{% endif %}>50</option>
+                    <option value="75" {% if per_page == "75" %}selected{% endif %}>75</option>
+                    <option value="100" {% if per_page == "100" %}selected{% endif %}>100</option>
+                    <option value="all" {% if per_page == "all" %}selected{% endif %}>Alle</option>
+                </select>
+            </label>
+            <p class="result-summary" id="result-summary" aria-live="polite">Einträge {{ start_item }}–{{ end_item }} von {{ total }}</p>
+            <nav class="pagination" id="pagination" aria-label="Seitennavigation">
+                <a class="pagination-link{% if page <= 1 %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page - 1) }}" data-page="{{ page - 1 }}" aria-label="Vorherige Seite" {% if page <= 1 %}aria-disabled="true"{% endif %}>Zurück</a>
+                {% for number in page_numbers %}
+                    {% if number is none %}
+                <span class="pagination-ellipsis" aria-hidden="true">…</span>
+                    {% else %}
+                <a class="pagination-link{% if number == page %} is-current{% endif %}" href="{{ page_url(q, per_page, number) }}" data-page="{{ number }}"{% if number == page %} aria-current="page"{% endif %}>{{ number }}</a>
+                    {% endif %}
+                {% endfor %}
+                <a class="pagination-link{% if page >= total_pages %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page + 1) }}" data-page="{{ page + 1 }}" aria-label="Nächste Seite" {% if page >= total_pages %}aria-disabled="true"{% endif %}>Weiter</a>
+            </nav>
+        </form>
+        <div class="media-grid" id="media-grid">
+            {% for item in items %}
+            <article class="media-card">
+                <div class="media-frame">
+                    <img src="{{ item.image_url }}" alt="{{ item.title }}" width="320" height="320" loading="lazy" decoding="async">
+                </div>
+                <div class="media-card-content">
+                    <h2>{{ item.title }}</h2>
+                    <p class="media-version">Version: {{ item.version }}</p>
+                    <a href="/download/{{ item.id }}" class="download-link">
+                        Download
+                    </a>
+                </div>
+            </article>
+            {% else %}
+            <p class="no-results">Keine Einträge gefunden.</p>
+            {% endfor %}
+        </div>
+    </main>
+    <script>
+        (() => {
+            const form = document.getElementById("results-controls");
+            const search = document.getElementById("search-input");
+            const pageSize = document.getElementById("per-page");
+            const summary = document.getElementById("result-summary");
+            const pagination = document.getElementById("pagination");
+            const grid = document.getElementById("media-grid");
+            let debounceTimer;
+            let activeRequest;
+
+            const pageUrl = (page) => {
+                const params = new URLSearchParams({
+                    q: search.value,
+                    per_page: pageSize.value,
+                    page: String(page),
+                });
+                return `/?${params.toString()}`;
+            };
+
+            function appendPageLink(label, page, options = {}) {
+                if (options.ellipsis) {
+                    const ellipsis = document.createElement("span");
+                    ellipsis.className = "pagination-ellipsis";
+                    ellipsis.setAttribute("aria-hidden", "true");
+                    ellipsis.textContent = "…";
+                    pagination.append(ellipsis);
+                    return;
+                }
+
+                const link = document.createElement("a");
+                link.className = `pagination-link${options.current ? " is-current" : ""}${options.disabled ? " is-disabled" : ""}`;
+                link.href = pageUrl(page);
+                link.dataset.page = String(page);
+                link.textContent = label;
+                if (options.current) link.setAttribute("aria-current", "page");
+                if (options.disabled) link.setAttribute("aria-disabled", "true");
+                if (options.label) link.setAttribute("aria-label", options.label);
+                pagination.append(link);
+            }
+
+            function renderPagination(data) {
+                pagination.replaceChildren();
+                appendPageLink("Zurück", data.page - 1, {
+                    disabled: data.page <= 1,
+                    label: "Vorherige Seite",
+                });
+                for (const number of data.page_numbers) {
+                    appendPageLink(number === null ? "…" : String(number), number, {
+                        current: number === data.page,
+                        ellipsis: number === null,
+                    });
+                }
+                appendPageLink("Weiter", data.page + 1, {
+                    disabled: data.page >= data.total_pages,
+                    label: "Nächste Seite",
+                });
+            }
+
+            function renderItems(items) {
+                grid.replaceChildren();
+                if (!items.length) {
+                    const empty = document.createElement("p");
+                    empty.className = "no-results";
+                    empty.textContent = "Keine Einträge gefunden.";
+                    grid.append(empty);
+                    return;
+                }
+
+                for (const item of items) {
+                    const card = document.createElement("article");
+                    card.className = "media-card";
+                    const frame = document.createElement("div");
+                    frame.className = "media-frame";
+                    const image = document.createElement("img");
+                    image.src = item.image_url || "";
+                    image.alt = item.title || "";
+                    image.width = 320;
+                    image.height = 320;
+                    image.loading = "lazy";
+                    image.decoding = "async";
+                    frame.append(image);
+
+                    const content = document.createElement("div");
+                    content.className = "media-card-content";
+                    const title = document.createElement("h2");
+                    title.textContent = item.title || "Ohne Titel";
+                    const version = document.createElement("p");
+                    version.className = "media-version";
+                    version.textContent = `Version: ${item.version || "Standard"}`;
+                    const download = document.createElement("a");
+                    download.className = "download-link";
+                    download.href = `/download/${item.id}`;
+                    download.textContent = "Download";
+                    content.append(title, version, download);
+                    card.append(frame, content);
+                    grid.append(card);
+                }
+            }
+
+            async function loadPage(page) {
+                activeRequest?.abort();
+                activeRequest = new AbortController();
+                const params = new URLSearchParams({
+                    q: search.value,
+                    per_page: pageSize.value,
+                    page: String(page),
+                });
+                summary.textContent = "Suche läuft …";
+
+                try {
+                    const response = await fetch(`/api/media?${params}`, {
+                        signal: activeRequest.signal,
+                        headers: { Accept: "application/json" },
+                    });
+                    if (!response.ok) throw new Error("Search request failed");
+                    const data = await response.json();
+                    renderItems(data.items);
+                    renderPagination(data);
+                    summary.textContent = `Einträge ${data.start_item}–${data.end_item} von ${data.total}`;
+                    history.replaceState(null, "", pageUrl(data.page));
+                } catch (error) {
+                    if (error.name !== "AbortError") {
+                        summary.textContent = "Einträge konnten nicht geladen werden.";
+                    }
+                }
+            }
+
+            form.addEventListener("submit", (event) => {
+                event.preventDefault();
+                loadPage(1);
+            });
+            search.addEventListener("input", () => {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(() => loadPage(1), 150);
+            });
+            pageSize.addEventListener("change", () => loadPage(1));
+            pagination.addEventListener("click", (event) => {
+                const link = event.target.closest("a[data-page]");
+                if (!link || link.getAttribute("aria-disabled") === "true") return;
+                event.preventDefault();
+                loadPage(Number(link.dataset.page));
+            });
+        })();
+    </script>
+</body>
+</html>

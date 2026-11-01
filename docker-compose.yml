@@ -1,0 +1,19 @@
+# Docker Compose Configuration
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - media_data:/data
+    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+  scraper:
+    build: .
+    volumes:
+      - media_data:/data
+    depends_on:
+      - web
+    command: ["python", "-m", "scrapers.scraper"]
+
+volumes:
+  media_data:
