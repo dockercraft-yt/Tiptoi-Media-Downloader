@@ -25,3 +25,5 @@ media_data/
 *.db-wal
 *.log
 .DS_Store
+*-dev.yml
+*-dev.yaml

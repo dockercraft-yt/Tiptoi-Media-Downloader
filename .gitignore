@@ -36,3 +36,7 @@ htmlcov/
 Thumbs.db
 *.swp
 *.swo
+
+# DEVELOPMENT FILES
+*-dev.yml
+*-dev.yaml
