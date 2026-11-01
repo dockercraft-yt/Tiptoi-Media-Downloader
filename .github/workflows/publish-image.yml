@@ -7,7 +7,23 @@ on:
       - master
     tags:
       - "v*"
+    paths:
+      - app.py
+      - Dockerfile
+      - docker-compose.yml
+      - scrapers/**
+      - static/**
+      - templates/**
+      - .github/workflows/publish-image.yml
   pull_request:
+    paths:
+      - app.py
+      - Dockerfile
+      - docker-compose.yml
+      - scrapers/**
+      - static/**
+      - templates/**
+      - .github/workflows/publish-image.yml
   workflow_dispatch:
 
 permissions:
