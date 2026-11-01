@@ -42,7 +42,7 @@ Die folgenden Screenshots verwenden synthetische Beispieldaten und neutrale Plat
 Voraussetzung: Docker Engine und Docker Compose V2.
 
 ```sh
-docker compose up --build
+docker compose up -d
 ```
 
 Öffne anschließend <http://localhost:8000>. Compose startet die Weboberfläche und führt den Scraper einmal aus. Die Scraper-Ausgabe lässt sich mit folgendem Befehl verfolgen:

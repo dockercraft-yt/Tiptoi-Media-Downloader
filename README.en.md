@@ -42,7 +42,7 @@ The screenshots below use synthetic sample records and neutral placeholder artwo
 Requirements: Docker Engine and Docker Compose V2.
 
 ```sh
-docker compose up --build
+docker compose up -d
 ```
 
 Then open <http://localhost:8000>. Compose starts the web interface and runs the scraper once. Follow the scraper output with:
