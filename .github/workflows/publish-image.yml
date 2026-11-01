@@ -10,7 +10,7 @@ on:
     paths:
       - app.py
       - Dockerfile
-      - docker-compose.yml
+      - compose.yml
       - scrapers/**
       - static/**
       - templates/**
@@ -19,7 +19,7 @@ on:
     paths:
       - app.py
       - Dockerfile
-      - docker-compose.yml
+      - compose.yml
       - scrapers/**
       - static/**
       - templates/**
