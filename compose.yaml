@@ -6,13 +6,13 @@ services:
       - "8000:8000"
     volumes:
       - ./media_data:/data
+    depends_on:
+      - scraper
     command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
     user: "${PUID:-1000}:${PGID:-1000}"
   scraper:
     image: ghcr.io/dockercraft-yt/tiptoi-media-downloader:latest
     volumes:
       - ./media_data:/data
-    depends_on:
-      - web
     command: ["python", "-m", "scrapers.scraper"]
     user: "${PUID:-1000}:${PGID:-1000}"
