@@ -305,15 +305,21 @@ body {
 	}
 
 	.page-header {
-		grid-template-columns: 1fr;
-		gap: 12px;
+		grid-template-columns: minmax(0, 1fr) 40px;
+		gap: 8px;
 		margin-bottom: 20px;
 	}
 
-	.page-title,
-	.theme-toggle {
+	.page-title {
 		grid-column: 1;
-		justify-self: center;
+		justify-self: start;
+		text-align: left;
+	}
+
+	.theme-toggle {
+		grid-column: 2;
+		justify-self: end;
+		align-self: start;
 	}
 
 	.results-toolbar {
