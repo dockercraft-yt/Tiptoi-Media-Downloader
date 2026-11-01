@@ -18,8 +18,11 @@ Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbar
 - Filtert Titel direkt während der Eingabe, auch mit deutschen Umlauten.
 - Bietet Seitengrößen von 25, 50, 75, 100 oder allen Einträgen.
 - Zeigt eine sticky Such- und Seitennavigation.
-- Leitet den Download-Link direkt zur externen `.gme`-Datei weiter. Die Audiodatei wird nicht vom Scraper in SQLite oder im Docker-Volume gespeichert.
-- Verwendet SQLite im persistenten Docker-Volume `media_data` und verhindert doppelte Audio-URLs.
+- Startet standardmäßig im Darkmode. Ein Icon-Button mit Sonne und Mondsichel wechselt das Theme; die Auswahl wird im Browser gespeichert.
+- Richtet den Theme-Button auf Mobilgeräten neben der ersten Titelzeile aus.
+- Leitet den Download-Link direkt zur externen `.gme`-Datei weiter. Der Scraper lädt die Audiodatei nicht herunter und speichert sie weder in SQLite noch unter `/data`.
+- Speichert Scraper-Treffer nach jeder Produktseite in SQLite und verhindert doppelte Audio-URLs.
+- Verwendet `./media_data` als persistenten Host-Bind-Mount für die Datenbank.
 
 ## Screenshots
 
@@ -39,7 +42,22 @@ Die folgenden Screenshots verwenden synthetische Beispieldaten und neutrale Plat
 
 ## Start mit Docker Compose
 
-Voraussetzung: Docker Engine und Docker Compose V2.
+Voraussetzung: Docker Engine und Docker Compose V2. Das Standard-Compose verwendet das veröffentlichte GHCR-Image; lokale Quellcodeänderungen sind erst mit einem neuen Image enthalten. Beide Dienste mounten `./media_data` nach `/data` und verwenden standardmäßig UID/GID `1000:1000`.
+
+Lege bei Bedarf eine `.env` im Projektverzeichnis mit den IDs des Host-Benutzers an:
+
+```dotenv
+PUID=1000
+PGID=1000
+```
+
+Passe die Werte an, falls `id -u` oder `id -g` andere IDs ausgibt. Der Ordner `media_data` und eine vorhandene `database.db` müssen für diese IDs schreibbar sein. Unter Linux kannst du den Besitz bei Bedarf so korrigieren:
+
+```sh
+sudo chown -R "$(id -u):$(id -g)" media_data
+```
+
+### Veröffentlichtes Image
 
 ```sh
 docker compose up -d
@@ -57,14 +75,31 @@ Für einen späteren manuellen Scrape:
 docker compose run --rm scraper
 ```
 
-Die SQLite-Datei liegt im Container unter `/data/database.db`; das benannte Volume `media_data` bewahrt sie zwischen Container-Neuerstellungen. `docker compose down` entfernt die Container, lässt das Volume aber bestehen. **`docker compose down -v` löscht das Volume und damit die Datenbank.**
+Die SQLite-Datei liegt auf dem Host unter `media_data/database.db` und im Container unter `/data/database.db`. `docker compose down` entfernt die Container, lässt den Bind-Mount und die Datenbank bestehen. Zum Löschen der Datenbank muss die Datei im Host-Verzeichnis bewusst entfernt werden.
+
+### Lokale Entwicklung
+
+`compose-dev.yaml` baut den Workspace-Code mit `Dockerfile-dev` und startet die Container als Benutzer `app` mit den konfigurierten PUID/PGID-Werten:
+
+```sh
+docker compose -f compose-dev.yaml up -d --build
+```
+
+Da das Dev-Compose den Scraper als Abhängigkeit des Webservices startet, kann auch ein Web-Neustart einen Scrape auslösen. Nur den Webservice ohne Abhängigkeiten neu bauen und starten:
+
+```sh
+docker compose -f compose-dev.yaml build web
+docker compose -f compose-dev.yaml up -d --no-deps web
+```
+
+Der Scraper protokolliert gefundene Produktseiten, Audio-Links und neu gespeicherte Zeilen getrennt. `Found ... product pages` bedeutet noch nicht, dass die Produkte bereits in SQLite stehen. Treffer werden nach jeder Produktseite committed; bei einem Abbruch bleiben bereits gespeicherte Treffer erhalten. Doppelte Audio-URLs werden ignoriert.
 
 ## Architektur
 
 - **Web:** FastAPI, Jinja2 und lokale CSS-Dateien.
 - **Scraper:** Python-Standardbibliothek (`urllib` und `html.parser`); Chromium ist nicht erforderlich.
 - **Datenbank:** SQLite mit eindeutiger Audio-URL.
-- **Container:** Multi-Stage-Dockerfile; Quellcode wird ins Image kopiert, Daten liegen separat im Volume.
+- **Container:** `compose.yaml` verwendet das veröffentlichte Image; `compose-dev.yaml` baut den lokalen Quellcode. Beide verwenden einen Host-Bind-Mount für die SQLite-Datei.
 
 ## Lizenz und Rechte
 

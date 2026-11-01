@@ -18,8 +18,11 @@ A private, unofficial web interface for browsing publicly accessible tiptoi® au
 - Filters titles as you type, including German umlauts.
 - Offers page sizes of 25, 50, 75, 100, or all entries.
 - Keeps the search and page navigation sticky while scrolling.
-- Redirects the download link to the external `.gme` file. The scraper does not store the audio file in SQLite or in the Docker volume.
-- Uses SQLite in the persistent Docker volume `media_data` and prevents duplicate audio URLs.
+- Starts in dark mode. A sun-and-crescent icon button switches themes, and the selection is stored in the browser.
+- Keeps the theme button beside the first title line on mobile screens.
+- Redirects the download link to the external `.gme` file. The scraper does not download the audio file or store it in SQLite or under `/data`.
+- Saves scraper results to SQLite after each product page and prevents duplicate audio URLs.
+- Uses `./media_data` as a persistent host bind mount for the database.
 
 ## Screenshots
 
@@ -39,7 +42,22 @@ The screenshots below use synthetic sample records and neutral placeholder artwo
 
 ## Run with Docker Compose
 
-Requirements: Docker Engine and Docker Compose V2.
+Requirements: Docker Engine and Docker Compose V2. The default Compose file uses the published GHCR image; local source changes are included only after a new image is published. Both services mount `./media_data` at `/data` and default to UID/GID `1000:1000`.
+
+If needed, create a `.env` file in the project directory with the host user's IDs:
+
+```dotenv
+PUID=1000
+PGID=1000
+```
+
+Adjust the values if `id -u` or `id -g` reports different IDs. The `media_data` directory and any existing `database.db` must be writable by those IDs. On Linux, correct ownership when necessary with:
+
+```sh
+sudo chown -R "$(id -u):$(id -g)" media_data
+```
+
+### Published Image
 
 ```sh
 docker compose up -d
@@ -57,14 +75,31 @@ To run the scraper manually later:
 docker compose run --rm scraper
 ```
 
-The SQLite file is located at `/data/database.db` inside the container; the named volume `media_data` preserves it when containers are recreated. `docker compose down` removes the containers but keeps the volume. **`docker compose down -v` deletes the volume and the database.**
+The SQLite file is located at `media_data/database.db` on the host and `/data/database.db` inside the container. `docker compose down` removes the containers but keeps the bind-mounted directory and database. To delete the database, remove the file from the host directory intentionally.
+
+### Local Development
+
+`compose-dev.yaml` builds the workspace source with `Dockerfile-dev` and runs the containers as user `app` with the configured PUID/PGID values:
+
+```sh
+docker compose -f compose-dev.yaml up -d --build
+```
+
+The dev Compose file starts the scraper as a dependency of the web service, so restarting the web service may also start a scrape. To rebuild and start only the web service:
+
+```sh
+docker compose -f compose-dev.yaml build web
+docker compose -f compose-dev.yaml up -d --no-deps web
+```
+
+The scraper logs product pages found, audio links found, and newly saved rows separately. `Found ... product pages` does not mean those products have already been stored in SQLite. Results are committed after each product page, so saved rows survive an interrupted run. Duplicate audio URLs are ignored.
 
 ## Architecture
 
 - **Web:** FastAPI, Jinja2, and local CSS files.
 - **Scraper:** Python standard library (`urllib` and `html.parser`); Chromium is not required.
 - **Database:** SQLite with unique audio URLs.
-- **Container:** Multi-stage Dockerfile; source code is copied into the image, while data is stored separately in the volume.
+- **Container:** `compose.yaml` uses the published image; `compose-dev.yaml` builds the local source. Both use a host bind mount for the SQLite file.
 
 ## License and Rights
 
