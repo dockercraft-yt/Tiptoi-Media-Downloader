@@ -1,5 +1,7 @@
 # Tiptoi Audio-Link-Katalog
 
+[English](README.en.md)
+
 Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbarer tiptoi®-Audioeinträge. Der Scraper speichert Titel, Vorschaubild und die URL zur `.gme`-Datei in SQLite. Der Download-Link öffnet anschließend die Datei beim jeweiligen Anbieter.
 
 ## Wichtige Hinweise
