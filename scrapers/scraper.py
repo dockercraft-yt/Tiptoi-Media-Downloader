@@ -169,46 +169,46 @@ def scrape_ravensburger():
         raise RuntimeError("No product links found; the Ravensburger page structure may have changed")
 
     logger.info("Found %d product pages", len(products))
-    scraped_records = []
-
-    for product in products:
-        try:
-            article = fetch_page(product["href"])
-        except RuntimeError as error:
-            logger.warning("Skipping %s: %s", product["href"], error)
-            continue
-
-        title = article.title or product["title"]
-        records = extract_audio_records(title, article.links)
-        if records:
-            scraped_records.extend(records)
-        else:
-            logger.debug("No GME file found on %s", product["href"])
-
-        time.sleep(0.3)
-
-    if not scraped_records:
-        raise RuntimeError("No .gme audio links found on the product pages")
-
+    scraped_record_count = 0
+    inserted = 0
     conn = sqlite3.connect(DB_PATH)
     try:
-        inserted = 0
-        for record in scraped_records:
-            cursor = conn.execute(
-                """
-                INSERT OR IGNORE INTO media (title, audio_url, image_url, version)
-                VALUES (?, ?, ?, ?)
-                """,
-                record,
-            )
-            inserted += cursor.rowcount
-        conn.commit()
+        for page_number, product in enumerate(products, start=1):
+            try:
+                article = fetch_page(product["href"])
+            except RuntimeError as error:
+                logger.warning("Skipping %s: %s", product["href"], error)
+                continue
+
+            title = article.title or product["title"]
+            records = extract_audio_records(title, article.links)
+            if records:
+                scraped_record_count += len(records)
+                for record in records:
+                    cursor = conn.execute(
+                        """
+                        INSERT OR IGNORE INTO media (title, audio_url, image_url, version)
+                        VALUES (?, ?, ?, ?)
+                        """,
+                        record,
+                    )
+                    inserted += cursor.rowcount
+            else:
+                logger.debug("No GME file found on %s", product["href"])
+
+            conn.commit()
+            if page_number % 10 == 0 or page_number == len(products):
+                logger.info("Processed %d/%d product pages", page_number, len(products))
+            time.sleep(0.3)
     finally:
         conn.close()
 
+    if not scraped_record_count:
+        raise RuntimeError("No .gme audio links found on the product pages")
+
     logger.info(
         "Scraping finished: %d audio files found, %d new rows saved",
-        len(scraped_records),
+        scraped_record_count,
         inserted,
     )
 
