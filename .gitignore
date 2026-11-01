@@ -38,5 +38,4 @@ Thumbs.db
 *.swo
 
 # DEVELOPMENT FILES
-*-dev.yml
-*-dev.yaml
+*-dev*
