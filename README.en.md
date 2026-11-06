@@ -49,6 +49,7 @@ If needed, create a `.env` file in the project directory with the host user's ID
 ```dotenv
 PUID=1000
 PGID=1000
+SCRAPER_CRON="0 3 * * *"
 ```
 
 Adjust the values if `id -u` or `id -g` reports different IDs. The `media_data` directory and any existing `database.db` must be writable by those IDs. On Linux, correct ownership when necessary with:
@@ -63,16 +64,16 @@ sudo chown -R "$(id -u):$(id -g)" media_data
 docker compose up -d
 ```
 
-Then open <http://localhost:8000>. Compose starts the web interface and runs the scraper once. Follow the scraper output with:
+Then open <http://localhost:8000>. Compose starts the web interface and runs the scraper once immediately, then follows the schedule. `SCRAPER_CRON` uses a five-field cron expression in UTC and defaults to daily at 03:00 UTC. Set a different value in `.env` to change the schedule. Follow the scraper output with:
 
 ```sh
 docker compose logs -f scraper
 ```
 
-To run the scraper manually later:
+To run the scraper manually once without scheduling:
 
 ```sh
-docker compose run --rm scraper
+docker compose run --rm -e SCRAPER_CRON= scraper
 ```
 
 The SQLite file is located at `media_data/database.db` on the host and `/data/database.db` inside the container. `docker compose down` removes the containers but keeps the bind-mounted directory and database. To delete the database, remove the file from the host directory intentionally.
@@ -97,7 +98,7 @@ The scraper logs product pages found, audio links found, and newly saved rows se
 ## Architecture
 
 - **Web:** FastAPI, Jinja2, and local CSS files.
-- **Scraper:** Python standard library (`urllib` and `html.parser`); Chromium is not required.
+- **Scraper:** Python standard library (`urllib` and `html.parser`) plus APScheduler for the cron schedule; Chromium is not required.
 - **Database:** SQLite with unique audio URLs.
 - **Container:** `compose.yaml` uses the published image; `compose-dev.yaml` builds the local source. Both use a host bind mount for the SQLite file.
 

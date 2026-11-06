@@ -49,6 +49,7 @@ Lege bei Bedarf eine `.env` im Projektverzeichnis mit den IDs des Host-Benutzers
 ```dotenv
 PUID=1000
 PGID=1000
+SCRAPER_CRON="0 3 * * *"
 ```
 
 Passe die Werte an, falls `id -u` oder `id -g` andere IDs ausgibt. Der Ordner `media_data` und eine vorhandene `database.db` müssen für diese IDs schreibbar sein. Unter Linux kannst du den Besitz bei Bedarf so korrigieren:
@@ -63,16 +64,16 @@ sudo chown -R "$(id -u):$(id -g)" media_data
 docker compose up -d
 ```
 
-Öffne anschließend <http://localhost:8000>. Compose startet die Weboberfläche und führt den Scraper einmal aus. Die Scraper-Ausgabe lässt sich mit folgendem Befehl verfolgen:
+Öffne anschließend <http://localhost:8000>. Compose startet die Weboberfläche und führt den Scraper einmal direkt sowie danach nach dem Zeitplan aus. `SCRAPER_CRON` verwendet ein fünfstelliges Cron-Muster in UTC und ist standardmäßig auf täglich um 03:00 UTC gesetzt. Du kannst den Wert in `.env` anpassen. Die Scraper-Ausgabe lässt sich mit folgendem Befehl verfolgen:
 
 ```sh
 docker compose logs -f scraper
 ```
 
-Für einen späteren manuellen Scrape:
+Für einen späteren manuellen Einmallauf ohne Zeitplan:
 
 ```sh
-docker compose run --rm scraper
+docker compose run --rm -e SCRAPER_CRON= scraper
 ```
 
 Die SQLite-Datei liegt auf dem Host unter `media_data/database.db` und im Container unter `/data/database.db`. `docker compose down` entfernt die Container, lässt den Bind-Mount und die Datenbank bestehen. Zum Löschen der Datenbank muss die Datei im Host-Verzeichnis bewusst entfernt werden.
@@ -97,7 +98,7 @@ Der Scraper protokolliert gefundene Produktseiten, Audio-Links und neu gespeiche
 ## Architektur
 
 - **Web:** FastAPI, Jinja2 und lokale CSS-Dateien.
-- **Scraper:** Python-Standardbibliothek (`urllib` und `html.parser`); Chromium ist nicht erforderlich.
+- **Scraper:** Python-Standardbibliothek (`urllib` und `html.parser`) sowie APScheduler für den Cron-Zeitplan; Chromium ist nicht erforderlich.
 - **Datenbank:** SQLite mit eindeutiger Audio-URL.
 - **Container:** `compose.yaml` verwendet das veröffentlichte Image; `compose-dev.yaml` baut den lokalen Quellcode. Beide verwenden einen Host-Bind-Mount für die SQLite-Datei.
 
