@@ -1,6 +1,6 @@
 # Tiptoi Audio Link Catalog
 
-[Deutsch](README.md)
+[German](README.md)
 
 A private, unofficial web interface for browsing publicly accessible tiptoi® audio entries. The scraper stores titles, preview images, and URLs to `.gme` files in SQLite. The download link then opens the file from its respective provider.
 
@@ -28,17 +28,11 @@ A private, unofficial web interface for browsing publicly accessible tiptoi® au
 
 The screenshots below use synthetic sample records and neutral placeholder artwork. They do not contain Ravensburger images or audio files.
 
-### Desktop
+| Startpage   |      Search      |
+|:----------:|:-------------:|
+| <img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktop view with search bar, pagination, and media cards" width="600">|<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Results filtered for Forest" width="600">  |   
+|<img src="docs/screenshots/catalog-mobile_dark_light.png" alt="Mobile view with wrapped page navigation" width="200">| <img src="docs/screenshots/catalog-mobile_dark_light_search.png" alt="Mobile view with wrapped page navigation" width="200">  |
 
-<img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktop view with search, page-size selection, and media cards" width="800">
-
-### Search
-
-<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Results filtered for Forest" width="800">
-
-### Mobile
-
-<img src="docs/screenshots/catalog-mobile_dark.png" alt="Mobile view with wrapped page navigation" width="400">
 
 ## Run with Docker Compose
 

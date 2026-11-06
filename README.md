@@ -28,17 +28,10 @@ Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbar
 
 Die folgenden Screenshots verwenden synthetische Beispieldaten und neutrale Platzhaltergrafiken. Sie enthalten keine Ravensburger-Bilder oder Audiodateien.
 
-### Desktop
-
-<img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktopansicht mit Suchleiste, Seitenauswahl und Medienkarten" width="600">
-
-### Suche
-
-<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Nach Forest gefilterte Treffer" width="600">
-
-### Mobil
-
-<img src="docs/screenshots/catalog-mobile_dark.png" alt="Mobile Ansicht mit umbrochener Seitennavigation" width="200">
+| Startseite   |      Suche      |
+|:----------:|:-------------:|
+| <img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktopansicht mit Suchleiste, Seitenauswahl und Medienkarten" width="600">|<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Nach Forest gefilterte Treffer" width="600">  |   
+|<img src="docs/screenshots/catalog-mobile_dark_light.png" alt="Mobile Ansicht mit umbrochener Seitennavigation" width="200">| <img src="docs/screenshots/catalog-mobile_dark_light_search.png" alt="Mobile Ansicht mit umbrochener Seitennavigation" width="200">  |
 
 ## Start mit Docker Compose
 
