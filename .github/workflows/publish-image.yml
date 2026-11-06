@@ -2,18 +2,8 @@ name: Build and publish Docker image
 
 on:
   push:
-    branches:
-      - main
-      - master
     tags:
       - "v*.*.*"
-    paths:
-      - app.py
-      - Dockerfile
-      - scrapers/**
-      - static/**
-      - templates/**
-      - .github/workflows/publish-image.yml
   pull_request:
     paths:
       - app.py
@@ -22,8 +12,6 @@ on:
       - static/**
       - templates/**
       - .github/workflows/publish-image.yml
-  workflow_dispatch:
-
 permissions:
   contents: read
 
@@ -62,7 +50,6 @@ jobs:
         with:
           images: ${{ steps.image.outputs.name }}
           tags: |
-            type=ref,event=branch
             type=ref,event=tag
             type=ref,event=pr
 
