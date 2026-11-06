@@ -1,4 +1,4 @@
-# Tiptoi Audio-Link-Katalog
+# Tiptoi Media Downloader
 
 🌐 [English](README.en.md)
 
