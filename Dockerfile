@@ -1,5 +1,5 @@
 FROM python:3.11-slim AS dependencies
-RUN pip install --no-cache-dir --prefix=/install fastapi uvicorn jinja2
+RUN pip install --no-cache-dir --prefix=/install fastapi uvicorn jinja2 apscheduler==3.11.0
 
 FROM python:3.11-slim AS runtime
 ARG PUID=1000

@@ -1,73 +1,54 @@
-# Tiptoi Audio Link Catalog
+# Tiptoi Media Downloader
 
-[Deutsch](README.md)
+🇩🇪 [German](README.md)
 
-A private, unofficial web interface for browsing publicly accessible tiptoi® audio entries. The scraper stores titles, preview images, and URLs to `.gme` files in SQLite. The download link then opens the file from its respective provider.
+A private, non-official web interface for browsing publicly accessible tiptoi® audio entries. This catalog serves as a user-friendly interface to find content and open it via the respective providers.
 
 ## Important Notes
 
-- This project is **not affiliated with Ravensburger or tiptoi®**, is not supported by them, and is not an official product.
-- The project was created exclusively for private, experimental purposes. This does not grant permission to use or redistribute downloaded content.
-- To the best of the project's knowledge, Ravensburger currently does not offer official native tiptoi® software for Linux. This independent web interface is not an official replacement.
-- The project was created entirely with AI. The code, documentation, and design were AI-generated; no guarantee is made that they have been fully reviewed for technical or legal correctness.
-- Trademarks, product names, images, and audio files belong to their respective rights holders. This project does not include or license those materials. Check the applicable terms and rights before using them. Do not publish or distribute content unless you are authorized to do so.
+- This project is **not affiliated with or endorsed by Ravensberg or tiptoi® and is not an official product**.
+- The project was created exclusively for private, experimental purposes. The use or distribution of downloaded content is not permitted.
+- Since Ravensberg currently does not offer official native tiptoi® software for Linux, this independent web interface serves as an alternative.
+- The project was created with the help of AI. Code, documentation, and design were AI-generated; no full professional or legal audit is guaranteed.
+- Trademarks, product names, images, and audio files belong to their respective owners. This project does not include or license these materials.
 
 ## Features
 
-- Scrapes product titles, preview images, and `.gme` links from the Ravensburger support site.
-- Filters titles as you type, including German umlauts.
-- Offers page sizes of 25, 50, 75, 100, or all entries.
-- Keeps the search and page navigation sticky while scrolling.
-- Redirects the download link to the external `.gme` file. The scraper does not store the audio file in SQLite or in the Docker volume.
-- Uses SQLite in the persistent Docker volume `media_data` and prevents duplicate audio URLs.
+- **Easy Browsing:** Browse the catalog to find products and their corresponding `.gme` links.
+- **Smart Search:** Filter results in real-time as you type (including German umlauts).
+- **Customizable View:** Choose between various page sizes (25, 50, 75, 100, or all).
+- **Modern Design:** Starts automatically in Dark Mode with a practical toggle between light and dark themes.
+- **Mobile Optimized:** The interface is designed to be easily used on mobile devices (smartphones/tablets).
+- **Direct Linking:** Links lead directly to the external provider; audio files are not stored locally.
 
 ## Screenshots
 
-The screenshots below use synthetic sample records and neutral placeholder artwork. They do not contain Ravensburger images or audio files.
+The following screenshots use synthetic sample data and neutral placeholder graphics. They do not contain any Ravensberg images or audio files.
 
-### Desktop
+| Home Page   |      Search      |
+|:----------:|:-------------:|
+| <img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktop view with search bar, page selection, and media cards" width="600">|<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Results filtered by Forest" width="600">  |
+| <img src="docs/screenshots/catalog-mobile_dark_light.png" alt="Mobile view with wrapped page navigation" width="200">| <img src="docs/screenshots/catalog-mobile_dark_light_search.png" alt="Mobile view with wrapped page navigation" width="200">  |
 
-![Desktop view with search, page-size selection, and media cards](docs/screenshots/catalog-desktop.png)
+## Getting Started with Docker Compose
 
-### Search
+The system can be easily started using Docker Compose.
 
-![Results filtered for Forest](docs/screenshots/catalog-search.png)
+**Prerequisite:** Docker Engine and Docker Compose V2 must be installed.
 
-### Mobile
+1. **Installation:**
+   ```bash
+   git clone <Repository-URL>
+   cd Tiptoi-Media-Downloader
+   ```
+2. **Start:**
+   ```bash
+   docker compose up -d
+   ```
+   After starting, the web interface is available at `http://localhost:8000`. The scraper will run once immediately upon startup and then follow a set schedule.
 
-![Mobile view with wrapped page navigation](docs/screenshots/catalog-mobile.png)
-
-## Run with Docker Compose
-
-Requirements: Docker Engine and Docker Compose V2.
-
-```sh
-docker compose up -d
-```
-
-Then open <http://localhost:8000>. Compose starts the web interface and runs the scraper once. Follow the scraper output with:
-
-```sh
-docker compose logs -f scraper
-```
-
-To run the scraper manually later:
-
-```sh
-docker compose run --rm scraper
-```
-
-The SQLite file is located at `/data/database.db` inside the container; the named volume `media_data` preserves it when containers are recreated. `docker compose down` removes the containers but keeps the volume. **`docker compose down -v` deletes the volume and the database.**
-
-## Architecture
-
-- **Web:** FastAPI, Jinja2, and local CSS files.
-- **Scraper:** Python standard library (`urllib` and `html.parser`); Chromium is not required.
-- **Database:** SQLite with unique audio URLs.
-- **Container:** Multi-stage Dockerfile; source code is copied into the image, while data is stored separately in the volume.
+*For Advanced Users: Details regarding Cron settings, database paths, or specific identifiers can be adjusted in the `.env` file.*
 
 ## License and Rights
 
-No **open-source license file** is currently included for this private, entirely AI-generated project. Without a license, no explicit permission is granted to reuse the project code; the legal status of AI-generated content depends on the specific circumstances and jurisdiction.
-
-If you later decide to make the original project code available for reuse, MIT is a simple option **only for original code that you are legally entitled to license**. Such a license would not grant rights to Ravensburger/tiptoi®, images, audio files, or other third-party content. This is not legal advice.
+No **open-source license** is provided for this private, entirely AI-generated project. Without a license, no explicit permission is granted to reuse the project code; the specific legal status of AI-generated content depends on the individual case and jurisdiction.

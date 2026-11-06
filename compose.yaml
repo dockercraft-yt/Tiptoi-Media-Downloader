@@ -12,6 +12,8 @@ services:
     user: "${PUID:-1000}:${PGID:-1000}"
   scraper:
     image: ghcr.io/dockercraft-yt/tiptoi-media-downloader:latest
+    environment:
+      SCRAPER_CRON: "${SCRAPER_CRON:-0 3 * * *}"
     volumes:
       - ./media_data:/data
     command: ["python", "-m", "scrapers.scraper"]

@@ -7,6 +7,9 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import urljoin, urlsplit
 from urllib.request import Request, urlopen
 
+from apscheduler.schedulers.blocking import BlockingScheduler
+from apscheduler.triggers.cron import CronTrigger
+
 DB_PATH = os.environ.get("DATABASE_PATH", "data/database.db")
 ROOT_URL = "https://service.ravensburger.de/tiptoi%C2%AE/tiptoi%C2%AE_Audiodateien"
 USER_AGENT = (
@@ -213,5 +216,38 @@ def scrape_ravensburger():
     )
 
 
+def run_scheduled_scrape():
+    try:
+        scrape_ravensburger()
+    except Exception:
+        logger.exception("Scraping run failed")
+
+
+def main():
+    cron_expression = os.environ.get("SCRAPER_CRON", "").strip()
+    if not cron_expression:
+        scrape_ravensburger()
+        return
+
+    try:
+        trigger = CronTrigger.from_crontab(cron_expression, timezone="UTC")
+    except ValueError as error:
+        raise ValueError(
+            "Invalid SCRAPER_CRON value; expected a five-field cron expression"
+        ) from error
+
+    scheduler = BlockingScheduler(timezone="UTC")
+    scheduler.add_job(
+        run_scheduled_scrape,
+        trigger,
+        id="scrape-ravensburger",
+        max_instances=1,
+        coalesce=True,
+    )
+    logger.info("Scraper scheduled with cron '%s' (UTC)", cron_expression)
+    run_scheduled_scrape()
+    scheduler.start()
+
+
 if __name__ == "__main__":
-    scrape_ravensburger()
+    main()
