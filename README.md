@@ -40,6 +40,7 @@ Das System lässt sich einfach über Docker Compose starten.
    ```bash
    git clone <Repository-URL>
    cd Tiptoi-Media-Downloader
+   mv .env.example .env
    ```
 2. **Start:**
    ```bash
