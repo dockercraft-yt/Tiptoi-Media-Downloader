@@ -30,15 +30,15 @@ The screenshots below use synthetic sample records and neutral placeholder artwo
 
 ### Desktop
 
-![Desktop view with search, page-size selection, and media cards](docs/screenshots/catalog-desktop.png)
+<img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktop view with search, page-size selection, and media cards" width="800">
 
 ### Search
 
-![Results filtered for Forest](docs/screenshots/catalog-search.png)
+<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Results filtered for Forest" width="800">
 
 ### Mobile
 
-![Mobile view with wrapped page navigation](docs/screenshots/catalog-mobile.png)
+<img src="docs/screenshots/catalog-mobile_dark.png" alt="Mobile view with wrapped page navigation" width="400">
 
 ## Run with Docker Compose
 

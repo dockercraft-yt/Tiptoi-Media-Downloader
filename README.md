@@ -30,15 +30,15 @@ Die folgenden Screenshots verwenden synthetische Beispieldaten und neutrale Plat
 
 ### Desktop
 
-![Desktopansicht mit Suchleiste, Seitenauswahl und Medienkarten](docs/screenshots/catalog-desktop.png)
+<img src="docs/screenshots/catalog-desktop_dark_light.png" alt="Desktopansicht mit Suchleiste, Seitenauswahl und Medienkarten" width="600">
 
 ### Suche
 
-![Nach Forest gefilterte Treffer](docs/screenshots/catalog-search.png)
+<img src="docs/screenshots/catalog-desktop_dark_light_search.png" alt="Nach Forest gefilterte Treffer" width="600">
 
 ### Mobil
 
-![Mobile Ansicht mit umbrochener Seitennavigation](docs/screenshots/catalog-mobile.png)
+<img src="docs/screenshots/catalog-mobile_dark.png" alt="Mobile Ansicht mit umbrochener Seitennavigation" width="200">
 
 ## Start mit Docker Compose
 
