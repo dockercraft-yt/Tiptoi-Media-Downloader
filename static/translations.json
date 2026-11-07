@@ -1,0 +1,42 @@
+{
+  "de": {
+    "search": "Suchen",
+    "search_placeholder": "Titel eingeben",
+    "page_size": "Einträge pro Seite",
+    "pagination": "Seitennavigation",
+    "all": "Alle",
+    "result_summary": "Einträge {start}–{end} von {total}",
+    "previous_page": "Zurück",
+    "previous_page_aria": "Vorherige Seite",
+    "next_page": "Weiter",
+    "next_page_aria": "Nächste Seite",
+    "theme_light": "Hellmodus aktivieren",
+    "theme_dark": "Darkmode aktivieren",
+    "no_results": "Keine Einträge gefunden.",
+    "version": "Version: {version}",
+    "untitled": "Ohne Titel",
+    "standard_version": "Standard",
+    "loading": "Suche läuft …",
+    "load_error": "Einträge konnten nicht geladen werden."
+  },
+  "en": {
+    "search": "Search",
+    "search_placeholder": "Enter a title",
+    "page_size": "Items per page",
+    "pagination": "Pagination",
+    "all": "All",
+    "result_summary": "Items {start}–{end} of {total}",
+    "previous_page": "Previous",
+    "previous_page_aria": "Previous page",
+    "next_page": "Next",
+    "next_page_aria": "Next page",
+    "theme_light": "Enable light mode",
+    "theme_dark": "Enable dark mode",
+    "no_results": "No entries found.",
+    "version": "Version: {version}",
+    "untitled": "Untitled",
+    "standard_version": "Standard",
+    "loading": "Searching …",
+    "load_error": "Could not load entries."
+  }
+}

@@ -17,6 +17,7 @@ A private, non-official web interface for browsing publicly accessible tiptoi® 
 - **Easy Browsing:** Browse the catalog to find products and their corresponding `.gme` links.
 - **Smart Search:** Filter results in real-time as you type (including German umlauts).
 - **Customizable View:** Choose between various page sizes (25, 50, 75, 100, or all).
+- **Multilingual Interface:** Text follows the browser language (German or English).
 - **Modern Design:** Starts automatically in Dark Mode with a practical toggle between light and dark themes.
 - **Mobile Optimized:** The interface is designed to be easily used on mobile devices (smartphones/tablets).
 - **Direct Linking:** Links lead directly to the external provider; audio files are not stored locally.

@@ -17,6 +17,7 @@ Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbar
 - **Einfaches Browsen:** Durchsuche den Katalog nach Produkten und finde die dazugehörigen `.gme`-Links.
 - **Intelligente Suche:** Filtere Ergebnisse in Echtzeit während der Eingabe (inklusive deutscher Umlaute).
 - **Anpassbare Ansicht:** Wähle zwischen verschiedenen Seitengrößen (25, 50, 75, 100 oder allen).
+- **Mehrsprachige Oberfläche:** Die Texte richten sich nach der Browsersprache (Deutsch oder Englisch).
 - **Modernes Design:** Automatischer Start im Darkmode mit einem praktischen Switch für den Wechsel zwischen hellem und dunklem Thema.
 - **Mobiloptimiert:** Die Oberfläche ist so gestaltet, dass sie auch auf Mobilgeräten (Smartphone/Tablet) gut bedienbar ist.
 - **Direkte Verknüpfung:** Der Link führt dich direkt zum entsprechenden Anbieter; die Audiodateien werden nicht lokal gespeichert.

@@ -31,22 +31,22 @@
         </header>
         <form class="results-toolbar" id="results-controls" action="/" method="get">
             <label class="search-control" for="search-input">
-                <span>Suchen</span>
-                <input id="search-input" name="q" type="search" value="{{ q }}" placeholder="Titel eingeben" autocomplete="off">
+                <span data-i18n="search">Suchen</span>
+                <input id="search-input" name="q" type="search" value="{{ q }}" placeholder="Titel eingeben" data-i18n-placeholder="search_placeholder" autocomplete="off">
             </label>
             <label class="page-size-control" for="per-page">
-                <span>Einträge pro Seite</span>
+                <span data-i18n="page_size">Einträge pro Seite</span>
                 <select id="per-page" name="per_page">
                     <option value="25" {% if per_page == "25" %}selected{% endif %}>25</option>
                     <option value="50" {% if per_page == "50" %}selected{% endif %}>50</option>
                     <option value="75" {% if per_page == "75" %}selected{% endif %}>75</option>
                     <option value="100" {% if per_page == "100" %}selected{% endif %}>100</option>
-                    <option value="all" {% if per_page == "all" %}selected{% endif %}>Alle</option>
+                    <option value="all" data-i18n="all" {% if per_page == "all" %}selected{% endif %}>Alle</option>
                 </select>
             </label>
-            <p class="result-summary" id="result-summary" aria-live="polite">Einträge {{ start_item }}–{{ end_item }} von {{ total }}</p>
-            <nav class="pagination" id="pagination" aria-label="Seitennavigation">
-                <a class="pagination-link{% if page <= 1 %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page - 1) }}" data-page="{{ page - 1 }}" aria-label="Vorherige Seite" {% if page <= 1 %}aria-disabled="true"{% endif %}>Zurück</a>
+            <p class="result-summary" id="result-summary" data-start="{{ start_item }}" data-end="{{ end_item }}" data-total="{{ total }}" aria-live="polite">Einträge {{ start_item }}–{{ end_item }} von {{ total }}</p>
+            <nav class="pagination" id="pagination" aria-label="Seitennavigation" data-i18n-aria="pagination">
+                <a class="pagination-link{% if page <= 1 %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page - 1) }}" data-page="{{ page - 1 }}" data-i18n="previous_page" data-i18n-aria="previous_page_aria" aria-label="Vorherige Seite" {% if page <= 1 %}aria-disabled="true"{% endif %}>Zurück</a>
                 {% for number in page_numbers %}
                     {% if number is none %}
                 <span class="pagination-ellipsis" aria-hidden="true">…</span>
@@ -54,7 +54,7 @@
                 <a class="pagination-link{% if number == page %} is-current{% endif %}" href="{{ page_url(q, per_page, number) }}" data-page="{{ number }}"{% if number == page %} aria-current="page"{% endif %}>{{ number }}</a>
                     {% endif %}
                 {% endfor %}
-                <a class="pagination-link{% if page >= total_pages %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page + 1) }}" data-page="{{ page + 1 }}" aria-label="Nächste Seite" {% if page >= total_pages %}aria-disabled="true"{% endif %}>Weiter</a>
+                <a class="pagination-link{% if page >= total_pages %} is-disabled{% endif %}" href="{{ page_url(q, per_page, page + 1) }}" data-page="{{ page + 1 }}" data-i18n="next_page" data-i18n-aria="next_page_aria" aria-label="Nächste Seite" {% if page >= total_pages %}aria-disabled="true"{% endif %}>Weiter</a>
             </nav>
         </form>
         <div class="media-grid" id="media-grid">
@@ -65,19 +65,34 @@
                 </div>
                 <div class="media-card-content">
                     <h2>{{ item.title }}</h2>
-                    <p class="media-version">Version: {{ item.version }}</p>
+                    <p class="media-version" data-version="{{ item.version or 'Standard' }}">Version: {{ item.version or 'Standard' }}</p>
                     <a href="/download/{{ item.id }}" class="download-link">
                         Download
                     </a>
                 </div>
             </article>
             {% else %}
-            <p class="no-results">Keine Einträge gefunden.</p>
+            <p class="no-results" data-i18n="no_results">Keine Einträge gefunden.</p>
             {% endfor %}
         </div>
     </main>
     <script>
-        (() => {
+        (async () => {
+            let translations = {};
+            try {
+                const response = await fetch("/static/translations.json");
+                if (!response.ok) throw new Error("Translation file request failed");
+                const availableTranslations = await response.json();
+                const language = navigator.language.toLowerCase().startsWith("de") ? "de" : "en";
+                translations = availableTranslations[language] || availableTranslations.de;
+                document.documentElement.lang = language;
+            } catch {
+                translations = {};
+            }
+            const t = (key, values = {}, fallback = key) => Object.entries(values).reduce(
+                (text, [name, value]) => text.replaceAll(`{${name}}`, value),
+                translations[key] || fallback,
+            );
             const form = document.getElementById("results-controls");
             const search = document.getElementById("search-input");
             const pageSize = document.getElementById("per-page");
@@ -88,8 +103,28 @@
             let debounceTimer;
             let activeRequest;
 
+            document.querySelectorAll("[data-i18n]").forEach((element) => {
+                element.textContent = t(element.dataset.i18n, {}, element.textContent);
+            });
+            document.querySelectorAll("[data-i18n-aria]").forEach((element) => {
+                element.setAttribute("aria-label", t(element.dataset.i18nAria, {}, element.getAttribute("aria-label")));
+            });
+            document.querySelectorAll("[data-i18n-placeholder]").forEach((element) => {
+                element.placeholder = t(element.dataset.i18nPlaceholder, {}, element.placeholder);
+            });
+            summary.textContent = t("result_summary", {
+                start: summary.dataset.start,
+                end: summary.dataset.end,
+                total: summary.dataset.total,
+            }, summary.textContent);
+            document.querySelectorAll(".media-version").forEach((element) => {
+                element.textContent = t("version", { version: element.dataset.version }, element.textContent);
+            });
+
             function updateThemeToggle(theme) {
-                const label = theme === "dark" ? "Hellmodus aktivieren" : "Darkmode aktivieren";
+                const label = theme === "dark"
+                    ? t("theme_light", {}, "Hellmodus aktivieren")
+                    : t("theme_dark", {}, "Darkmode aktivieren");
                 themeToggle.setAttribute("aria-label", label);
                 themeToggle.title = label;
             }
@@ -138,9 +173,9 @@
 
             function renderPagination(data) {
                 pagination.replaceChildren();
-                appendPageLink("Zurück", data.page - 1, {
+                appendPageLink(t("previous_page", {}, "Zurück"), data.page - 1, {
                     disabled: data.page <= 1,
-                    label: "Vorherige Seite",
+                    label: t("previous_page_aria", {}, "Vorherige Seite"),
                 });
                 for (const number of data.page_numbers) {
                     appendPageLink(number === null ? "…" : String(number), number, {
@@ -148,9 +183,9 @@
                         ellipsis: number === null,
                     });
                 }
-                appendPageLink("Weiter", data.page + 1, {
+                appendPageLink(t("next_page", {}, "Weiter"), data.page + 1, {
                     disabled: data.page >= data.total_pages,
-                    label: "Nächste Seite",
+                    label: t("next_page_aria", {}, "Nächste Seite"),
                 });
             }
 
@@ -159,7 +194,7 @@
                 if (!items.length) {
                     const empty = document.createElement("p");
                     empty.className = "no-results";
-                    empty.textContent = "Keine Einträge gefunden.";
+                    empty.textContent = t("no_results", {}, "Keine Einträge gefunden.");
                     grid.append(empty);
                     return;
                 }
@@ -181,10 +216,12 @@
                     const content = document.createElement("div");
                     content.className = "media-card-content";
                     const title = document.createElement("h2");
-                    title.textContent = item.title || "Ohne Titel";
+                    title.textContent = item.title || t("untitled", {}, "Ohne Titel");
                     const version = document.createElement("p");
                     version.className = "media-version";
-                    version.textContent = `Version: ${item.version || "Standard"}`;
+                    version.textContent = t("version", {
+                        version: item.version || t("standard_version", {}, "Standard"),
+                    }, `Version: ${item.version || "Standard"}`);
                     const download = document.createElement("a");
                     download.className = "download-link";
                     download.href = `/download/${item.id}`;
@@ -203,7 +240,7 @@
                     per_page: pageSize.value,
                     page: String(page),
                 });
-                summary.textContent = "Suche läuft …";
+                summary.textContent = t("loading", {}, "Suche läuft …");
 
                 try {
                     const response = await fetch(`/api/media?${params}`, {
@@ -214,11 +251,15 @@
                     const data = await response.json();
                     renderItems(data.items);
                     renderPagination(data);
-                    summary.textContent = `Einträge ${data.start_item}–${data.end_item} von ${data.total}`;
+                    summary.textContent = t("result_summary", {
+                        start: data.start_item,
+                        end: data.end_item,
+                        total: data.total,
+                    }, `Einträge ${data.start_item}–${data.end_item} von ${data.total}`);
                     history.replaceState(null, "", pageUrl(data.page));
                 } catch (error) {
                     if (error.name !== "AbortError") {
-                        summary.textContent = "Einträge konnten nicht geladen werden.";
+                        summary.textContent = t("load_error", {}, "Einträge konnten nicht geladen werden.");
                     }
                 }
             }
