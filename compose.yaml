@@ -8,13 +8,15 @@ services:
       - ./media_data:/data
     depends_on:
       - scraper
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
     user: "${PUID:-1000}:${PGID:-1000}"
+    restart: unless-stopped
   scraper:
     image: ghcr.io/dockercraft-yt/tiptoi-media-downloader:${VERSION:-latest}
     environment:
       SCRAPER_CRON: "${SCRAPER_CRON:-0 3 * * *}"
     volumes:
       - ./media_data:/data
-    command: ["python", "-m", "scrapers.scraper"]
+    command: ["python", "-m", "app.scraper"]
     user: "${PUID:-1000}:${PGID:-1000}"
+    restart: unless-stopped
