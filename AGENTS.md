@@ -1,14 +1,17 @@
 # Project Agent Instructions
 
-Use these project-specific rules for all code, documentation, and container work. For user-facing overview and legal notes, see [README.md](README.md) and [README.en.md](README.en.md).
+Use these project-specific rules for all code, documentation, and container work. For user-facing overview and legal notes, see [README.md](README.md) and [docs/README.en.md](docs/README.en.md).
 
 ## Project Structure
 
-- `app.py` implements the FastAPI web app, Jinja2 routes, search, pagination, and SQLite reads.
-- `scrapers/scraper.py` fetches public product pages and records external `.gme` URLs; it does not download the audio files.
-- `templates/index.html` contains the page markup and browser-side search and theme behavior.
-- `static/style.css` owns layout, responsive rules, and the dark/light palettes.
-- `compose.yaml` runs the published GHCR image. `compose-dev.yaml` builds the workspace source with `Dockerfile-dev`.
+- `app/main.py` implements the FastAPI web app, Jinja2 routes, search, pagination, and SQLite reads. Run it as `uvicorn app.main:app`.
+- `app/scraper.py` fetches public product pages and records external `.gme` URLs; it does not download the audio files. Run it as `python -m app.scraper`.
+- `app/templates/index.html` contains the page markup and browser-side search and theme behavior.
+- `app/static/style.css` owns layout, responsive rules, and the dark/light palettes; `app/static/translations.json` holds the German and English UI texts.
+- `docker/Dockerfile` builds the single image used by both services; the build context is the repository root.
+- `requirements.txt` pins all Python dependencies.
+- `docs/` holds the English README and the synthetic screenshots.
+- `compose.yaml` runs the published GHCR image. `compose-dev.yaml` builds the workspace source with `docker/Dockerfile`. Both stay in the repository root because Compose reads `.env` and resolves `./media_data` relative to the Compose file.
 
 ## Data and Scraper Invariants
 
@@ -27,6 +30,14 @@ Use these project-specific rules for all code, documentation, and container work
 - Validate Compose changes with `docker compose -f compose.yaml config` or `docker compose -f compose-dev.yaml config`.
 - Build and run local code with `docker compose -f compose-dev.yaml build <service>` and `docker compose -f compose-dev.yaml up -d --no-deps <service>` when a dependent service, especially the scraper, should not be started. A normal `up` can start the scraper because the web service depends on it.
 - Do not remove or recreate `media_data` as part of routine testing. It contains the persistent SQLite database.
+
+## Releases and Image Tags
+
+- The `VERSION` file in the repository root is the single source of the release version (plain `X.Y.Z`, no `v`).
+- When `VERSION` changes on `main`, `.github/workflows/release.yml` builds and pushes the image as `vX.Y.Z`, then creates the Git tag and GitHub release. It fails if the tag already exists or is lower than the latest release. Do not create release tags by hand.
+- `.github/workflows/build.yml` checks that pull requests still build and pushes `latest` on every relevant push to `main`.
+- Record user-visible changes in `CHANGELOG.md` under the section for the version in `VERSION` (`## [X.Y.Z] – unveröffentlicht` until release). `release.yml` uses that section as the GitHub release notes, so replace `unveröffentlicht` with the release date before merging to `main`.
+- When a change breaks compatibility with older images (for example, renamed modules or changed Compose commands), increase at least the minor version.
 
 ## UI and Theme
 

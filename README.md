@@ -1,14 +1,14 @@
 # Tiptoi Media Downloader
 
-🌐 [English](README.en.md)
+🌐 [English](docs/README.en.md) · 📝 [Changelog](CHANGELOG.md)
 
 Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbarer tiptoi®-Audioeinträge. Dieser Katalog dient als benutzerfreundliche Schnittstelle, um Inhalte zu finden und über die entsprechenden Anbieter zu öffnen.
 
 ## Wichtige Hinweise
 
-- Dieses Projekt ist **nicht mit Ravensberger oder tiptoi® verbunden, wird nicht von ihnen unterstützt und ist kein offizielles Produkt**.
+- Dieses Projekt ist **nicht mit Ravensburger oder tiptoi® verbunden, wird nicht von ihnen unterstützt und ist kein offizielles Produkt**.
 - Das Projekt wurde ausschließlich für private, experimentelle Zwecke erstellt. Eine Nutzung oder Weitergabe heruntergeladener Inhalte wird damit nicht erlaubt.
-- Da Ravensberger derzeit keine offizielle native tiptoi®-Software für Linux anbietet, dient diese unabhängige Weboberfläche als Alternative.
+- Da Ravensburger derzeit keine offizielle native tiptoi®-Software für Linux anbietet, dient diese unabhängige Weboberfläche als Alternative.
 - Das Projekt wurde mithilfe von KI erstellt. Code, Dokumentation und Gestaltung wurden KI-generiert; eine vollständige fachliche oder rechtliche Prüfung wird nicht zugesichert.
 - Marken, Produktnamen, Bilder und Audiodateien gehören ihren jeweiligen Rechteinhabern. Dieses Projekt enthält und lizenziert diese Inhalte nicht.
 
@@ -24,7 +24,7 @@ Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbar
 
 ## Screenshots
 
-Die folgenden Screenshots verwenden synthetische Beispildaten und neutrale Platzhaltergrafiken. Sie enthalten keine Ravensberger-Bilder oder Audiodateien.
+Die folgenden Screenshots verwenden synthetische Beispieldaten und neutrale Platzhaltergrafiken. Sie enthalten keine Ravensburger-Bilder oder Audiodateien.
 
 | Startseite   |      Suche      |
 |:----------:|:-------------:|
@@ -39,7 +39,7 @@ Das System lässt sich einfach über Docker Compose starten.
 
 1. **Installation:**
    ```bash
-   git clone <Repository-URL>
+   git clone https://github.com/dockercraft-yt/Tiptoi-Media-Downloader
    cd Tiptoi-Media-Downloader
    mv .env.example .env
    ```
@@ -49,8 +49,8 @@ Das System lässt sich einfach über Docker Compose starten.
    ```
    Nach dem Start ist die Weboberfläche unter `http://localhost:8000` erreichbar. Der Scraper wird beim Start einmal direkt ausgeführt und dann auch nach einem festgelegten Zeitplan.
 
-*Für Fortgeschrittene: Details zu Cron-Einstellungen, Datenbank-Pfaden oder spezifischen Identifikatoren können in der `.env` Datei angepasst werden.*
+*Für Fortgeschrittene: Details zu Cron-Zeitplan, Image-Version sowie Benutzer- und Gruppen-ID (PUID/PGID) können in der `.env` Datei angepasst werden.*
 
 ## Lizenz und Rechte
 
-Für dieses private, vollständig KI-erstellte Projekt wird derzeit **keine Open-Source-Lizenz** mitgeliefert. Ohne Lizenz wird keine ausdrückliche Erlaubnis zur Weiterverwendung des Projektcodes erteilt; die konkrete Rechtslage für KI-generierte Inhalte hängt vom Einzelfund und der Rechtsordnung ab.
+Für dieses private, vollständig KI-erstellte Projekt wird derzeit **keine Open-Source-Lizenz** mitgeliefert. Ohne Lizenz wird keine ausdrückliche Erlaubnis zur Weiterverwendung des Projektcodes erteilt; die konkrete Rechtslage für KI-generierte Inhalte hängt vom Einzelfall und der Rechtsordnung ab.

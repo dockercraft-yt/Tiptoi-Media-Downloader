@@ -3,7 +3,7 @@ services:
   web:
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: docker/Dockerfile
       args:
         PUID: ${PUID:-1000}
         PGID: ${PGID:-1000}
@@ -11,14 +11,15 @@ services:
       - "8000:8000"
     volumes:
       - ./media_data:/data
-    command: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
     user: app
+    restart: unless-stopped
     depends_on:
       - scraper
   scraper:
     build:
       context: .
-      dockerfile: Dockerfile-dev
+      dockerfile: docker/Dockerfile
       args:
         PUID: ${PUID:-1000}
         PGID: ${PGID:-1000}
@@ -26,5 +27,6 @@ services:
       SCRAPER_CRON: "${SCRAPER_CRON:-0 3 * * *}"
     volumes:
       - ./media_data:/data
-    command: ["python", "-m", "scrapers.scraper"]
+    command: ["python", "-m", "app.scraper"]
     user: app
+    restart: unless-stopped

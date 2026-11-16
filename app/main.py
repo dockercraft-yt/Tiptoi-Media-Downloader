@@ -5,9 +5,11 @@ from fastapi.staticfiles import StaticFiles
 import math
 import os
 import sqlite3
+from pathlib import Path
 from urllib.parse import urlencode
 
 # Configuration
+BASE_DIR = Path(__file__).resolve().parent
 DB_PATH = os.environ.get("DATABASE_PATH", "data/database.db")
 
 os.makedirs(os.path.dirname(DB_PATH) or ".", exist_ok=True)
@@ -51,9 +53,9 @@ init_db()
 app = FastAPI(title="Ravensburger Tiptoi Media Downloader")
 
 # Mount static files for images and CSS/JS
-app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 
-templates = Jinja2Templates(directory="templates")
+templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH, check_same_thread=False)
