@@ -4,7 +4,7 @@ Alle nennenswerten Änderungen an diesem Projekt werden in dieser Datei festgeha
 
 Das Format orientiert sich an [Keep a Changelog](https://keepachangelog.com/de/1.1.0/), die Versionsnummern folgen [Semantic Versioning](https://semver.org/lang/de/).
 
-## [0.2.0] – unveröffentlicht
+## [0.2.0] – 2026-11-16
 
 > **Achtung beim Update:** Die Python-Module wurden umbenannt, die Container starten jetzt mit `app.main:app` und `python -m app.scraper`. Die neue `compose.yaml` funktioniert deshalb nicht mit älteren Images bis `v0.1.2`. Übernimm `compose.yaml` und `.env.example` aus diesem Release, und setze `VERSION` in deiner `.env` auf `latest` oder `v0.2.0`.
 
@@ -76,7 +76,7 @@ Erste Version.
 - Docker-Compose-Setup mit getrenntem Web- und Scraper-Dienst.
 - READMEs auf Deutsch und Englisch mit Hinweisen zu Rechten und KI-Erstellung.
 
-[0.2.0]: https://github.com/dockercraft-yt/Tiptoi-Media-Downloader/compare/v0.1.2...Development
+[0.2.0]: https://github.com/dockercraft-yt/Tiptoi-Media-Downloader/compare/v0.1.2...v0.2.0
 [0.1.2]: https://github.com/dockercraft-yt/Tiptoi-Media-Downloader/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/dockercraft-yt/Tiptoi-Media-Downloader/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/dockercraft-yt/Tiptoi-Media-Downloader/releases/tag/v0.1.0
