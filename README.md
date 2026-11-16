@@ -1,6 +1,6 @@
 # Tiptoi Media Downloader
 
-🌐 [English](docs/README.en.md)
+🌐 [English](docs/README.en.md) · 📝 [Changelog](CHANGELOG.md)
 
 Eine private, inoffizielle Weboberfläche zum Durchsuchen öffentlich erreichbarer tiptoi®-Audioeinträge. Dieser Katalog dient als benutzerfreundliche Schnittstelle, um Inhalte zu finden und über die entsprechenden Anbieter zu öffnen.
 

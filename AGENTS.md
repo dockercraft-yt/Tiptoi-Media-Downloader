@@ -36,6 +36,7 @@ Use these project-specific rules for all code, documentation, and container work
 - The `VERSION` file in the repository root is the single source of the release version (plain `X.Y.Z`, no `v`).
 - When `VERSION` changes on `main`, `.github/workflows/release.yml` builds and pushes the image as `vX.Y.Z`, then creates the Git tag and GitHub release. It fails if the tag already exists or is lower than the latest release. Do not create release tags by hand.
 - `.github/workflows/build.yml` checks that pull requests still build and pushes `latest` on every relevant push to `main`.
+- Record user-visible changes in `CHANGELOG.md` under the section for the version in `VERSION` (`## [X.Y.Z] – unveröffentlicht` until release). `release.yml` uses that section as the GitHub release notes, so replace `unveröffentlicht` with the release date before merging to `main`.
 - When a change breaks compatibility with older images (for example, renamed modules or changed Compose commands), increase at least the minor version.
 
 ## UI and Theme

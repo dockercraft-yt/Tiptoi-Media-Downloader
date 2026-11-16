@@ -1,6 +1,6 @@
 # Tiptoi Media Downloader
 
-🇩🇪 [German](../README.md)
+🇩🇪 [German](../README.md) · 📝 [Changelog (German)](../CHANGELOG.md)
 
 A private, non-official web interface for browsing publicly accessible tiptoi® audio entries. This catalog serves as a user-friendly interface to find content and open it via the respective providers.
 
